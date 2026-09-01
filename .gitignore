@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+*.apk
+*.ap_
+
+# Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+local.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
+*.swo
+
+# Misc
+*.log
+.env
