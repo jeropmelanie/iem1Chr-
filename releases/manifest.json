@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "versionCode": 1,
+  "releaseDate": "2026-09-01",
+  "changelog": "Initial release with gesture support, icon packs, and auto-updates",
+  "downloadUrl": "https://github.com/jeropmelanie/iem1Chr-/releases/download/v1.0.0/iem1chr.apk",
+  "features": {
+    "gestures": {
+      "version": "1.0",
+      "description": "Swipe, tap, and long-press gestures"
+    },
+    "icons": {
+      "version": "1.0",
+      "description": "Dynamic icon pack loading"
+    },
+    "updates": {
+      "version": "1.0",
+      "description": "Repository-based auto-updates"
+    }
+  }
+}

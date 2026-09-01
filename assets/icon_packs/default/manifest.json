@@ -1,0 +1,12 @@
+{
+  "name": "Default Icons",
+  "version": "1.0",
+  "author": "jeropmelanie",
+  "description": "Default system icon pack",
+  "icons": {
+    "com.google.android.apps.maps": "maps.png",
+    "com.google.android.apps.messaging": "messaging.png",
+    "com.android.gallery3d": "gallery.png",
+    "com.android.settings": "settings.png"
+  }
+}
