@@ -50,13 +50,13 @@ jobs:
 
       # 🔍 DEADLY FEATURE 2: Optimization (ZipAlign)
       # Aligns uncompressed data inside the APK to significantly reduce RAM consumption on the user's phone
-      - name: 🧬 Run Android ZipAlign Optimization
+            - name: 🧬 Run Android ZipAlign Optimization
         run: |
           mkdir -p aligned-artifacts
           VERSION_TAG=${GITHUB_REF#refs/tags/}
-          # Finds the compiled binary and optimizes its data layout
           RAW_APK=$(find app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
-          ${ANDROID_HOME}/build-tools/34.0.0/zipalign -v 4 "$RAW_APK" aligned-artifacts/iem1Chr -Aligned.apk
+          ${ANDROID_HOME}/build-tools/34.0.0/zipalign -v 4 "$RAW_APK" aligned-artifacts/Melan-Player-Aligned.apk
+
 
       # 🔍 DEADLY FEATURE 3: Google Play Grade V2/V3 Signing Pipeline
       # This signs the app using GitHub's encrypted secrets vault so your private passwords are never exposed in code
