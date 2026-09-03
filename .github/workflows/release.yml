@@ -1,4 +1,4 @@
-name: 💀 God-Mode Production Android Pipeline
+name: Pro APK Builder & Publisher
 
 on:
   push:
@@ -11,24 +11,24 @@ concurrency:
 
 jobs:
   build-and-sign:
-    name: 🛡️ Harden, Sign & Deploy Android Binary
+    name: Harden, Sign & Deploy Android Binary
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: 📁 Deep Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: ☕ Initialize Java Environment (JDK 17)
+      - name: Initialize Java Environment
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'zulu'
 
-      - name: ⚡ Rocket Booster Gradle Caching
+      - name: Optimize Gradle Build Speed
         uses: actions/cache@v4
         with:
           path: |
@@ -38,29 +38,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: 🔑 Grant Permissions to Build Tools
+      - name: Grant Permissions to Build Tools
         run: chmod +x gradlew
 
-      # 🔍 DEADLY FEATURE 1: Secure Code Vulnerability Scan
-      - name: 🕵️‍♂️ Run Security Vulnerability Scan (Lint)
-        run: ./gradlew lintRelease || echo "Lint warnings found, proceeding with caution..."
+      - name: Run Security Vulnerability Scan
+        run: ./gradlew lintRelease || echo "Lint warnings found, proceeding..."
 
-      - name: 🔨 Compile Production Release App
+      - name: Compile Production Release App
         run: ./gradlew assembleRelease
 
-      # 🔍 DEADLY FEATURE 2: Optimization (ZipAlign)
-      # Aligns uncompressed data inside the APK to significantly reduce RAM consumption on the user's phone
-            - name: 🧬 Run Android ZipAlign Optimization
+      - name: Run Android ZipAlign Optimization
         run: |
           mkdir -p aligned-artifacts
           VERSION_TAG=${GITHUB_REF#refs/tags/}
           RAW_APK=$(find app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
           ${ANDROID_HOME}/build-tools/34.0.0/zipalign -v 4 "$RAW_APK" aligned-artifacts/Melan-Player-Aligned.apk
 
-
-      # 🔍 DEADLY FEATURE 3: Google Play Grade V2/V3 Signing Pipeline
-      # This signs the app using GitHub's encrypted secrets vault so your private passwords are never exposed in code
-      - name: ✍️ Google Play-Grade Cryptographic Signing
+      - name: Google Play-Grade Cryptographic Signing
         id: sign_apk
         uses: r0adkll/sign-android-release@v1
         with:
@@ -72,28 +66,21 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
-      # 🔍 DEADLY FEATURE 4: Clean Artifact Staging
-      - name: 🏷️ Dynamic Version Staging
+      - name: Dynamic Version Staging
         run: |
           mkdir -p final-distribution
           VERSION_TAG=${GITHUB_REF#refs/tags/}
-          mv ${{ steps.sign_apk.outputs.signedReleaseFile }} final-distribution/iem1Chr launcher ${VERSION_TAG}-SIGNED.apk
+          mv ${{ steps.sign_apk.outputs.signedReleaseFile }} final-distribution/Melan-Player-${VERSION_TAG}-SIGNED.apk
 
-      - name: 🚀 Ship Vault-Signed Release
+      - name: Ship Vault-Signed Release
         uses: softprops/action-gh-release@v2
         with:
           files: final-distribution/*.apk
           generate_release_notes: true
           body: |
-            ## 📱 iem1Chr launcher Secure Distribution
-            
+            ## 📱 Melan Player Secure Distribution
             This production build has passed pipeline hardening protocols, data alignment verification, and cryptographic vault signing.
-            
-            ### 🔒 Security & Verification Manifest
-            - [x] **Lint Integrity**: Checked for memory leaks and secure code patterns
-            - [x] **ZipAligned Engine**: Optimized for maximum Android hardware performance
-            - [x] **V2/V3 Signature**: Digitally signed using Google Play compliant cryptography
-          draft: true
-          prerelease: true
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
