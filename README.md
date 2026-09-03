@@ -3,7 +3,7 @@
 [![Android Architecture](https://shields.io)](#)
 [![Kotlin](https://shields.io)](#)
 [![License](https://shields.io)](#)
-                      
+                     
                       **IEM1Chr*
 is a high-performance, deeply customizable Android homescreen environment engineered for fluid navigation and zero-overhead customization. Built on a modular architecture, it bridges the gap between unrooted simplicity and low-level system personalization, featuring a standalone repository-based continuous delivery system.
 
