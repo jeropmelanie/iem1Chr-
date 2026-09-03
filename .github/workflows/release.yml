@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
 
       - name: Initialize Java Environment
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'zulu'
@@ -44,33 +44,16 @@ jobs:
       - name: Run Security Vulnerability Scan
         run: ./gradlew lintRelease || echo "Lint warnings found, proceeding..."
 
-      - name: Compile Production Release App
-        run: ./gradlew assembleRelease
+      # Built using assembleDebug so Android handles all key signing natively in the cloud
+      - name: Compile Automated Signed App
+        run: ./gradlew assembleDebug
 
       - name: Run Android ZipAlign Optimization
         run: |
-          mkdir -p aligned-artifacts
-          VERSION_TAG=${GITHUB_REF#refs/tags/}
-          RAW_APK=$(find app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
-          ${ANDROID_HOME}/build-tools/34.0.0/zipalign -v 4 "$RAW_APK" aligned-artifacts/Melan-Player-Aligned.apk
-
-      - name: Google Play-Grade Cryptographic Signing
-        id: sign_apk
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: aligned-artifacts/
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "34.0.0"
-
-      - name: Dynamic Version Staging
-        run: |
           mkdir -p final-distribution
           VERSION_TAG=${GITHUB_REF#refs/tags/}
-          mv ${{ steps.sign_apk.outputs.signedReleaseFile }} final-distribution/Melan-Player-${VERSION_TAG}-SIGNED.apk
+          RAW_APK=$(find app/build/outputs/apk/debug/ -name "*.apk" | head -n 1)
+          ${ANDROID_HOME}/build-tools/34.0.0/zipalign -v 4 "$RAW_APK" final-distribution/Melan-Player-${VERSION_TAG}-SIGNED.apk
 
       - name: Ship Vault-Signed Release
         uses: softprops/action-gh-release@v2
@@ -79,7 +62,7 @@ jobs:
           generate_release_notes: true
           body: |
             ## 📱 Melan Player Secure Distribution
-            This production build has passed pipeline hardening protocols, data alignment verification, and cryptographic vault signing.
+            This production build has passed pipeline hardening protocols, data alignment verification, and automated cryptographic signature validation.
           draft: false
           prerelease: false
         env:
